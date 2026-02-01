@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdGenie - AI Marketing Tool</title>
+    <style>
+        body { font-family: sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 90%; max-width: 500px; }
+        h1 { color: #333; text-align: center; }
+        input { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 6px; border: 1px solid #eee; display: none; line-height: 1.6; }
+        .loading { text-align: center; color: #666; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>✨ AdGenie</h1>
+    <p style="text-align:center; color:#666;">Enter your product to generate instant marketing copy.</p>
+    
+    <input type="text" id="productInput" placeholder="e.g., Vintage Leather Jacket">
+    <button onclick="generateAd()">Generate Magic 🚀</button>
+    
+    <div class="loading" id="loader">✨ AI is thinking...</div>
+    <div id="result"></div>
+</div>
+
+<script>
+    async function generateAd() {
+        const product = document.getElementById('productInput').value;
+        const resultDiv = document.getElementById('result');
+        const loader = document.getElementById('loader');
+        
+        if(!product) return alert("Please enter a product name!");
+
+        resultDiv.style.display = 'none';
+        loader.style.display = 'block';
+
+        const response = await fetch('/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product })
+        });
+
+        const data = await response.json();
+        
+        loader.style.display = 'none';
+        resultDiv.style.display = 'block';
+        
+        if(data.success) {
+            // Convert markdown/bolding to HTML if needed, but the prompt asks for HTML
+            resultDiv.innerHTML = data.data.replace(/\*\*/g, '<b>').replace(/\*/g, '</b>').replace(/\n/g, '<br>'); 
+        } else {
+            resultDiv.innerHTML = "Error generating content. Please try again.";
+        }
+    }
+</script>
+
+</body>
+</html>
